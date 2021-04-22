@@ -6,12 +6,19 @@ const Server = require('./lib/Server')
  * @property {[Function]} inputValidator A validation function run on the user input
  */
 
+/**
+ * @typedef {Object} ServerConfig
+ * @property {any} gameClass A gamer.io Game class
+ * @property {Array.<SubscribeDescriptor>} subscribes List of subscribes
+ * @property {[Function]} playerDataValidator Function to validate the player data
+ * @property {[Function]} roomSettingsValidator Function to validate the room settings
+ * @property {[Function]} roomSettingsChecker Function to check the room settings compatibility
+ * @property {('default'|'all'|'error')} logLevel Level of server logs
+ */
 
 /**
  * Create and return a Server instance
- * @param {Object} config config object for the server
- *      - gameClass: A Game class
- *      - {Array.<SubscribeDescriptor>} list of subscribes
+ * @param {ServerConfig} config config object for the server
  * @returns {Server} an instance of Server
  */
 function createServer(config)
