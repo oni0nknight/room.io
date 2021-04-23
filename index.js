@@ -9,11 +9,14 @@ const Server = require('./lib/Server')
 /**
  * @typedef {Object} ServerConfig
  * @property {any} gameClass A gamer.io Game class
+ * @property {number} minPlayers The minimum number (included) of players to start the game
+ * @property {number} maxPlayers The maximum number (included) of players to start the game
  * @property {Array.<SubscribeDescriptor>} subscribes List of subscribes
  * @property {[Function]} playerDataValidator Function to validate the player data
  * @property {[Function]} roomSettingsValidator Function to validate the room settings
  * @property {[Function]} roomSettingsChecker Function to check the room settings compatibility
- * @property {('default'|'all'|'error')} logLevel Level of server logs
+ * @property {[('default'|'all'|'error')]} logLevel Level of server logs
+ * @property {[number]} maxNameLength Maximum number of characters for player names
  */
 
 /**
