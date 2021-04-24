@@ -3,7 +3,14 @@ const Server = require('./lib/Server')
 /**
  * @typedef {Object} SubscribeDescriptor
  * @property {string} name The subscribe name. The Game class must have a method with that name
- * @property {[Function]} inputValidator A validation function run on the user input
+ * @property {ValidationCallback} [inputValidator] A validation function run on the user input
+ */
+
+/**
+ * This callback type is called `validationCallback` and is used to validate user inputs.
+ * @callback ValidationCallback
+ * @param {any} data User input
+ * @returns {Boolean} Whether the user input is valid
  */
 
 /**
@@ -11,12 +18,12 @@ const Server = require('./lib/Server')
  * @property {any} gameClass A gamer.io Game class
  * @property {number} minPlayers The minimum number (included) of players to start the game
  * @property {number} maxPlayers The maximum number (included) of players to start the game
- * @property {Array.<SubscribeDescriptor>} subscribes List of subscribes
- * @property {[Function]} playerDataValidator Function to validate the player data
- * @property {[Function]} roomSettingsValidator Function to validate the room settings
- * @property {[Function]} roomSettingsChecker Function to check the room settings compatibility
- * @property {[('default'|'all'|'error')]} logLevel Level of server logs
- * @property {[number]} maxNameLength Maximum number of characters for player names
+ * @property {Array.<SubscribeDescriptor>} [subscribes=[]] List of subscribes
+ * @property {ValidationCallback} [playerDataValidator] Function to validate the player data
+ * @property {ValidationCallback} [roomSettingsValidator] Function to validate the room settings
+ * @property {ValidationCallback} [roomSettingsChecker] Function to check the room settings compatibility
+ * @property {('default'|'all'|'error')} [logLevel] Level of server logs
+ * @property {number} [maxNameLength=10] Maximum number of characters for player names
  */
 
 /**
