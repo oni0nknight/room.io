@@ -15,7 +15,7 @@ const Server = require('./lib/Server')
 
 /**
  * @typedef {Object} ServerConfig
- * @property {any} gameClass A gamer.io Game class
+ * @property {any} gameClass A room.io Game class
  * @property {number} minPlayers The minimum number (included) of players to start the game
  * @property {number} maxPlayers The maximum number (included) of players to start the game
  * @property {Array.<SubscribeDescriptor>} [subscribes=[]] List of subscribes
