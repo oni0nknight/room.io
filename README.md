@@ -104,8 +104,8 @@ An array of subscriptions for client-server communication, corresponding to your
 When subscribing to the name `foo` for instance, whenever a client sends the event `foo`, the server runs the given validator function against the client input. If it returns true (or is not provided), then the server looks for a method `foo` on the Game instance of the player room and calls it with a single object parameter containing the following information:
 ```js
 {
-    playerId: '' // publicId of the player who fired the event
-    data: {} // validated data sent by the player
+    playerId // publicId of the player who fired the event
+    data // validated data sent by the player
 }
 ```
 
