@@ -22,7 +22,7 @@ const Server = require('./lib/Server')
  * @property {ValidationCallback} [playerDataValidator] Function to validate the player data
  * @property {ValidationCallback} [roomSettingsValidator] Function to validate the room settings
  * @property {ValidationCallback} [roomSettingsChecker] Function to check the room settings compatibility
- * @property {('default'|'all'|'error')} [logLevel] Level of server logs
+ * @property {('none'|'default'|'error'|'all')} [logLevel] Level of server logs
  * @property {number} [maxNameLength=10] Maximum number of characters for player names
  */
 
