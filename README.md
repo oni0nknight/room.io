@@ -192,12 +192,19 @@ Sends an `errorCode` (string) to every players in the room, optionally with `par
 
 ## Logging
 
-The room.io logger has 5 log levels: `server`, `game`, `info`, `warning` and `error`.
-Use the `logLevel` setting from the configuration object to determine the logging level in the server console from 4 supported values:
-- `none` to hide every logs
-- `default` to display only `server`, `game` and `error` logs
-- `error` to display only `error` logs
-- `all` to display all logs
+Room.io uses [winston](https://github.com/winstonjs/winston) to log messages on the server.
+Use the `logLevel` setting from the configuration object to determine the logging level from the following supported values (default is `info`):
+
+| Name          | Level |  Description    |
+| ------------- | ----- | --------------- |
+| `server`      | `0`   | Logs at the server level. Displayed in green. |
+| `room`        | `1`   | Logs affecting the room and the game. Displayed in magenta. |
+| `error`       | `2`   | Error logs. Displayed in red. |
+| `warn`        | `3`   | Warning logs. Displayed in yellow. |
+| `info`        | `4`   | Basic info logs. Displayed in white. |
+| `debug`       | `5`   | Debug logs that can be used during development. Displayed in white. |
+
+Logs of a higher level than the chosen `logLevel` are not shown.
 
 ## Testing
 

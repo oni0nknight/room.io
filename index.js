@@ -7,6 +7,12 @@ const Server = require('./lib/Server')
  */
 
 /**
+ * @typedef {Object} LoggerConfig
+ * @property {('server'|'room'|'error'|'warn'|'info'|'debug')} [level] Logger level
+ * @property {object} [defaultMeta] Default added log metadata
+ */
+
+/**
  * This callback type is called `validationCallback` and is used to validate user inputs.
  * @callback ValidationCallback
  * @param {any} data User input
@@ -22,7 +28,7 @@ const Server = require('./lib/Server')
  * @property {ValidationCallback} [playerDataValidator] Function to validate the player data
  * @property {ValidationCallback} [roomSettingsValidator] Function to validate the room settings
  * @property {ValidationCallback} [roomSettingsChecker] Function to check the room settings compatibility
- * @property {('none'|'default'|'error'|'all')} [logLevel] Level of server logs
+ * @property {LoggerConfig} [logger] Logger configuration
  * @property {number} [maxNameLength=10] Maximum number of characters for player names
  */
 
