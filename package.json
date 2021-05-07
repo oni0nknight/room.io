@@ -1,14 +1,20 @@
 {
   "name": "room.io",
   "version": "0.1.0",
-  "description": "",
+  "description": "Framework for creating client-server game architectures based on socket.io",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "scripts": {},
+  "keywords": [
+    "game",
+    "websocket",
+    "socket"
+  ],
+  "author": "Théophile Gindre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oni0nknight/room.io.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "express": "4.17.1",
     "socket.io": "4.0.1",
