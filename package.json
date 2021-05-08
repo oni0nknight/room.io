@@ -1,6 +1,6 @@
 {
   "name": "room.io",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Framework for creating client-server game architectures based on socket.io",
   "main": "index.js",
   "scripts": {},
