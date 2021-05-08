@@ -193,7 +193,7 @@ Sends an `errorCode` (string) to every players in the room, optionally with `par
 ## Logging
 
 Room.io uses [winston](https://github.com/winstonjs/winston) to log messages on the server.
-Use the `logLevel` setting from the configuration object to determine the logging level from the following supported values (default is `info`):
+Use the `logger.level` setting from the configuration object to determine the logging level from the following supported values (default is `info`):
 
 | Name          | Level |  Description    |
 | ------------- | ----- | --------------- |
@@ -204,7 +204,7 @@ Use the `logLevel` setting from the configuration object to determine the loggin
 | `info`        | `4`   | Basic info logs. Displayed in white. |
 | `debug`       | `5`   | Debug logs that can be used during development. Displayed in white. |
 
-Logs of a higher level than the chosen `logLevel` are not shown.
+Logs of a higher level than the chosen `logger.level` are not shown.
 
 ## Testing
 
