@@ -72,7 +72,7 @@ server.run({ httpServer })
 
 ## API
 
-### Overview
+### Create a room.io server
 
 `room.io` exposes a single `createServer` function. Calling it with a configuration object returns a `room.io` server instance. Then calling the `run` method runs the server on the provided port.
 
@@ -99,8 +99,6 @@ const server = createServer({
 // Run the server
 server.run({ port: 3000 })
 ```
-
-### Server configuration
 
 `gameClass` (Mandatory)  
 A reference to your game class on the server side.
