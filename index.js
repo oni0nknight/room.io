@@ -1,8 +1,8 @@
 const Server = require('./lib/Server')
 
 /**
- * @typedef {Object} SubscribeDescriptor
- * @property {string} name The subscribe name. The Game class must have a method with that name
+ * @typedef {Object} ActionDescriptor
+ * @property {string} name The action name. The Game class must have a method with that name
  * @property {ValidationCallback} [inputValidator] A validation function run on the user input
  */
 
@@ -15,7 +15,7 @@ const Server = require('./lib/Server')
 /**
  * This callback type is called `validationCallback` and is used to validate user inputs.
  * @callback ValidationCallback
- * @param {any} data User input
+ * @param {any} data Client input
  * @returns {Boolean} Whether the user input is valid
  */
 
@@ -24,7 +24,7 @@ const Server = require('./lib/Server')
  * @property {any} gameClass A room.io Game class
  * @property {number} minPlayers The minimum number (included) of players to start the game
  * @property {number} maxPlayers The maximum number (included) of players to start the game
- * @property {Array.<SubscribeDescriptor>} [subscribes=[]] List of subscribes
+ * @property {Array.<ActionDescriptor>} [actions=[]] List of game actions
  * @property {ValidationCallback} [playerDataValidator] Function to validate the player data
  * @property {ValidationCallback} [roomSettingsValidator] Function to validate the room settings
  * @property {ValidationCallback} [roomSettingsChecker] Function to check the room settings compatibility

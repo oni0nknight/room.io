@@ -1,11 +1,19 @@
 # room.io
 
-Room.io is a free real-time communication framework for creating client-server game architectures. It is powered by [socket.io](https://github.com/socketio/socket.io) and consists of a Node.js server (this repository) and a [JavaScript client library](https://github.com/oni0nknight/room.io-client).
+A real-time communication framework for creating client-server games on the web.
 
-Room.io offers a secure room and player management for games run on the server-side, with built-in support for player disconnection without interrupting the game.
+[![Version npm](https://img.shields.io/npm/v/room.io.svg?style=flat)](https://www.npmjs.com/package/room.io) [![npm Downloads](https://img.shields.io/npm/dm/room.io.svg?style=flat)](https://npmcharts.com/compare/room.io?minimal=true) [![Dependencies](https://img.shields.io/david/oni0nknight/room.io)](https://david-dm.org/oni0nknight/room.io)
 
-It lets you cutomize the room settings and players data to adapt to your game.
+[![NPM](https://nodei.co/npm/room.io.png?compact=true)](https://nodei.co/npm/room.io/)
 
+This repository exposes the Node.js server. The client part is a convinient (but not mandatory) way to connect to your room.io server. It is provided in a separated repository: [room.io-client](https://github.com/oni0nknight/room.io-client).
+
+
+## Motivation
+
+`room.io` lets you focus on what's important: your game. It encapsulates for you the boring boilerplate code of room creation, player connection/disconnection or game settings. All that with security built-in to avoid unauthorized players to mess your server up.
+
+It uses [socket.io](https://github.com/socketio/socket.io) for the messages transport. You game runs on the server and client browsers connect to it via a websocket bidirectional channel.
 
 ## Installation
 
@@ -17,7 +25,7 @@ npm install room.io
 yarn add room.io
 ```
 
-## How to use
+## Quick Start
 
 ### Standalone
 
@@ -33,7 +41,7 @@ server.run()
 
 ### With an HTTP server
 
-You can attach the room.io server to a Node.js HTTP server.
+You can attach the `room.io` server to a Node.js HTTP server.
 
 ```js
 const httpServer = require('http').createServer()
@@ -48,7 +56,7 @@ server.run({ httpServer })
 
 ### With Express
 
-Express applications can integrate as request handlers for HTTP servers. As such you can connect the room.io server to an Express app.
+Express applications can integrate as request handlers for HTTP servers. As such you can connect the `room.io` server to an Express app.
 
 ```js
 const app = require('express')()
@@ -66,48 +74,43 @@ server.run({ httpServer })
 
 ### Overview
 
-Room.io exposes a single `createServer` function. Calling it with a configuration object returns a room.io server instance. Then calling the `run` method runs the server on the provided port.
+`room.io` exposes a single `createServer` function. Calling it with a configuration object returns a `room.io` server instance. Then calling the `run` method runs the server on the provided port.
 
 ```js
-// Server configuration
-const config = {
+const { createServer } = require('room.io')
+
+// Create the room.io server
+const server = createServer({
     gameClass: Game,
     minPlayers: 3,
     maxPlayers: 10,
-    subscribes: [
+    maxNameLength: 10,
+    actions: [
         { name: 'toggleLight', inputValidator: (input) => (typeof input === 'string') }
     ],
     playerDataValidator: (data) => !!data && (data?.avatar instanceof Number),
-    roomSettingsValidator: (settings) => !!settings && (typeof settings?.evilCount === 'string'),
-    roomSettingsChecker: (settings, playerCount) => settings.evilCount < playerCount,
-    logLevel: 'all',
-    maxNameLength: 10
-}
-
-// Create the room.io server
-const server = createServer(config)
+    roomSettingsValidator: (settings) => !!settings && (typeof settings?.lightCount === 'string'),
+    roomSettingsChecker: (settings, playerCount) => settings.lightCount <= playerCount,
+    logger: {
+        level: 'info'
+    }
+})
 
 // Run the server
-server.run({ port: 3000, httpServer: httpServer })
+server.run({ port: 3000 })
 ```
 
 ### Server configuration
 
 `gameClass` (Mandatory)  
-A reference to a Game class on the server side.
+A reference to your game class on the server side.
 
 `minPlayers` and `maxPlayers` (Mandatory)  
 The minimum and maximum (inclusive) number of players per game.
 
-`subscribes` (Optional)  
-An array of subscriptions for client-server communication, corresponding to your game logic. A subscription consists of a name and an optional input-validator function.
-When subscribing to the name `foo` for instance, whenever a client sends the event `foo`, the server runs the given validator function against the client input. If it returns true (or is not provided), then the server looks for a method `foo` on the Game instance of the player room and calls it with a single object parameter containing the following information:
-```js
-{
-    playerId // publicId of the player who fired the event
-    data // validated data sent by the player
-}
-```
+`actions` (Optional)  
+The list of actions available for client-server communication, corresponding to your game logic. An action consists of a name and an optional input-validator function.
+If you have a `toggleLight` action for instance, whenever a client sends the event `toggleLight` the server looks for a method `toggleLight` on the room game instance and calls it. If an input-validator function is provided, it is called before that and passed the client input. If the validator returns a falsy value, the game action is not executed and an error is sent back to the calling client.
 
 `playerDataValidator` (Optional)  
 A function callback run by the server against the input sent by players when trying to update their own player data. Must return a boolean value telling if the input is in the valid form.
@@ -124,71 +127,123 @@ The maximum length (inclusive) for player names. Longer names are truncated to t
 
 ### Game class
 
-A room.io server requires a reference to a Game class. This class represents your game logic on the server side, and can be any Javascript function or ES6 class. It has to expose a contructor (room.io uses the `new` operator) and a method `init`.
+A `room.io` server requires a reference to a game class. This class contains your game logic, it represents an instance of your game running on your server. It can be any Javascript function or ES6 class and has to expose a contructor (it is instanciated with the `new` operator) and an `init` method.
 
-When a room host player launches the game, a new instance of the Game class is created and its method `init` is called with a initialization object containing useful information about the game.
+When a room host player launches the game, a new instance of your game class is created and its method `init` is called with a initialization object containing game context data.
 
 ```js
 class Game {
     constructor() {}
 
     init({
-        players // an array of players in the form { publicId, name, data }
+        players // the list of players in the room. In the form { publicId, name, data }
         host // the publicId of the host player
         settings // the room settings
         roomCode // the room code
-        roomPusher // a RoomPusher instance, used to push messages to players
-        logger // a Logger instance to log messages on the server
+        roomPusher // a RoomPusher instance. Can be used to push messages to players
+        logger // the room logger, used to log messages on the server
     })
     {
-        ...
+        // Initialize your game here
     }
 }
 ```
 
-For each event name declared in the `subscribes` server config, your Game class should also expose a method named accordingly. Those subscription callback methods take a single object as parameter as such:
+### Game actions
+
+In addition to the `init` method, your game class must expose methods named after every `actions` declared in the server config. Action methods take a single object as parameter containing the requester `playerId` and `data` as such:
 ```js
-toggleLight({ playerId, data}) {
-    // playerId is the publicId of the player who sent the event
-    // data is input sent along with the event
+toggleLight({
+    playerId // publicId of the player who sent the action event
+    data // data sent with the action event
+})
+{
+    // Your game logic corresponding to the 'toggleLight' action
 }
 ```
 
-In those methods, you can return data to the requesting player, or send back an error:
+Action methods are used to update your game state. They are the interface between client players and the game running in the room.
+
+#### Return response
+
+Game actions can send back a response to the caller. Simply return an object with a `response` key containing whatever data you want to return. Note that you have to return synchronously in the action method. If you need to perform asynchronous actions, use the [RoomPusher](#roompusher) to send *another* message to client(s) when your action is done.
+
 ```js
-toggleLight({ playerId, data}) {
+talk({ playerId, data}) {
+    this.sentences[playerId].push(data)
+    return { response: `You just said ${data}` }
+}
+```
+
+> *Note:* the response must be a simple type or a serializable datastructure, as it is sent through via websocket.
+
+#### Return error
+
+Game actions can also send back an error to the caller. Your game UI should prevent your players from accidentaly do an action they are not supposed to do, but still always check for access rights and data validity as UIs can be hijacked.
+
+To send back an error, just return an object with an `error` key containing your error. Note that you have to return synchronously in the action method.
+
+```js
+rollDice({ playerId }) {
     if (!this.isMyTurnToPlay(playerId))
     {
-        return { error: 'not your turn to play' }
+        return { error: { code: 'E_NOT_YOUR_TURN' } }
     }
 
-    const state = this.doToggleLight(data)
-    return { response: `the light is now ${state}` }
+    // ...
 }
 ```
+
+> *Note:* the error content must be a simple type or a serializable datastructure, as it is sent through via websocket.
+
+> *Note:* `room.io` sends low-level errors that are always in the form: `{ code: 'err_xxx' }`. You can stick to the same formalism for your custom errors, but that is not mandatory. See [built-in errors](#built-in-errors) for a full list of `room.io` errors.
 
 ### RoomPusher
 
 When a game instance is created, the server provides a RoomPusher instance to the Game in the `init` call. This object can be used to send messages from the server to the players.
 
-A RoomPusher instance exposes 3 methods:
-
+The `pushTo` method sends a event to a specific player (publicId), optionally with a payload.
 ```js
-pushTo(playerPublicId, message, parameters)
+say({ playerId, data }) {
+    const { targetId, message } = data
+
+    // Transmit the message to the target
+    this.roomPusher.pushTo(targetId, 'incomingMessage', {
+        from: playerId,
+        message
+    })
+}
 ```
-Sends a `message` (string) to a specific `playerPublicId` (string), optionally with `parameters` (any).  
 
-
+The `pushToAll` method sends a event to every players in the room, optionally with a payload.
 ```js
-pushToAll(message, parameters)
+yell({ playerId, data }) {
+    const { message } = data
+
+    // Transmit the message to everyone
+    this.roomPusher.pushToAll('incomingMessage', {
+        from: playerId,
+        message
+    })
+}
 ```
-Sends a `message` (string) to every players in the room, optionally with `parameters` (any).  
+
+> *Note:* `pushToAll` always sends to every player, including the action requester if `pushToAll` is called in a game action.
 
 
+The `pushError` method sends an error to every players in the room, optionally with a payload.
 ```js
-pushError(errorCode, parameters = {})
+rollDice({ playerId }) {
+    if (!this.isMyTurnToPlay(playerId))
+    {
+        // Warn everyone that playerId is trying to cheat
+        this.roomPusher.pushError('E_CHEAT_DETECTED', { playerId })
+        return
+    }
+
+    // ...
+}
 ```
-Sends an `errorCode` (string) to every players in the room, optionally with `parameters` (any).
 
 ## Logging
 
