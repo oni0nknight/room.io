@@ -18,10 +18,10 @@ It uses [socket.io](https://github.com/socketio/socket.io) for the messages tran
 ## Installation
 
 ```bash
-// with npm
+# with npm
 npm install room.io
 
-// with yarn
+# with yarn
 yarn add room.io
 ```
 
@@ -196,7 +196,7 @@ rollDice({ playerId }) {
 
 > *Note:* the error content must be a simple type or a serializable datastructure, as it is sent through via websocket.
 
-> *Note:* `room.io` sends low-level errors that are always in the form: `{ code: 'err_xxx' }`. You can stick to the same formalism for your custom errors, but that is not mandatory. See [built-in errors](#built-in-errors) for a full list of `room.io` errors.
+> *Note:* `room.io` sends low-level errors that are always in the form: `{ code: 'err_xxx' }`. You can stick to the same formalism for your custom errors, but that is not mandatory. See the documentation of [`room.io-client`](https://github.com/oni0nknight/room.io-client#errors) for a full list of `room.io` errors.
 
 ### RoomPusher
 
