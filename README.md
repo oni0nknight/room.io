@@ -152,7 +152,9 @@ class Game {
 }
 ```
 
-### Game actions
+### Actions
+
+Actions are used to update your game state. They are the interface between client players and the game running in the room.
 
 In addition to the `init` method, your game class must expose methods named after every `actions` declared in the server config. Actions take a single object as parameter containing the requester `playerId` and `data` as such:
 ```js
@@ -164,8 +166,6 @@ toggleLight({
     // Your game logic
 }
 ```
-
-Actions are used to update your game state. They are the interface between client players and the game running in the room.
 
 #### Return response
 
