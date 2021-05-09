@@ -157,8 +157,8 @@ Actions are used to update your game state. They are the interface between clien
 In addition to the `init` method, your game class must expose methods named after every `actions` declared in the server config. Actions take a single object as parameter containing the requester `playerId` and `data` as such:
 ```js
 toggleLight({
-    playerId // publicId of the player who sent the action event
-    data // data sent with the action event
+    playerId // public id of the action requester
+    data // optional payload
 })
 {
     // Your game logic
