@@ -231,7 +231,7 @@ yell({ playerId, data }) {
 }
 ```
 
-> *Note:* `pushToAll` always sends to every player, including the action requester if `pushToAll` is called in a game action.
+> *Note:* `pushToAll` always sends to every player, including the action requester if `pushToAll` is called in an action.
 
 
 The `pushError` method sends an error to every players in the room, optionally with a payload.
