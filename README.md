@@ -108,28 +108,31 @@ A reference to your game class on the server side.
 `minPlayers` and `maxPlayers` (Mandatory)  
 The minimum and maximum (inclusive) number of players per game.
 
-`actions` (Optional)  
-The list of actions available for client-server communication, corresponding to your game logic. An action consists of a name and an optional input-validator function.
-If you have a `toggleLight` action for instance, whenever a client sends the event `toggleLight` the server looks for a method `toggleLight` on the room game instance and calls it. If an input-validator function is provided, it is called before that and passed the client input. If the validator returns a falsy value, the game action is not executed and an error is sent back to the calling client.
-
-`playerDataValidator` (Optional)  
-A function callback run by the server against the input sent by players when trying to update their own player data. Must return a boolean value telling if the input is in the valid form.
-
-`roomSettingsValidator` (Optional)  
-A function callback run by the server against the input sent by the host player when trying to update the room settings. Must return a boolean value telling if the input is in the valid form.
-
-`roomSettingsChecker` (Optional)  
-A function callback run by the server when the game instance is starting. It receives 2 parameters: `roomSettings` (current room settings) and `playerCount` (current number of players) and must return a boolean value telling if the game can start with the current room settings. You can use it to ensure the room settings chosen by the host are valid for the current number of players.
-
 `maxNameLength` (Optional)  
 The maximum length (inclusive) for player names. Longer names are truncated to this value. You can enforce a length limit on the client side.
+
+`actions` (Optional)  
+The list of actions necessary for your game. An action consists of a name and an optional input-validator function.
+If you have a `toggleLight` action for instance, whenever a client sends the event `toggleLight` the server looks for a method `toggleLight` on the room game instance and calls it. If an input-validator function is provided, it is called before that and passed the client input. If the validator returns a falsy value, the action is not executed and an error is sent back to the calling client.
+
+`playerDataValidator` (Optional)  
+A function run against the payload sent by players when trying to update their own player data. Must return a boolean value telling if the payload is in the valid form.
+
+`roomSettingsValidator` (Optional)  
+A function run against the payload sent by the host player when trying to update the room settings. Must return a boolean value telling if the payload is in the valid form.
+
+`roomSettingsChecker` (Optional)  
+A function run when the game instance is starting. It receives 2 parameters: `roomSettings` (current room settings) and `playerCount` (current number of players) and must return a boolean value telling if the game can start with the current room settings. You can use it to ensure the room settings chosen by the host are valid for the current number of players.
+
+`logger` (Optional)
+A configuration object for the server logger. Supported keys are `level` for the log level and `defaultMeta` for the default metadata added to each log.
 
 
 ### Game class
 
-A `room.io` server requires a reference to a game class. This class contains your game logic, it represents an instance of your game running on your server. It can be any Javascript function or ES6 class and has to expose a contructor (it is instanciated with the `new` operator) and an `init` method.
+The game class contains your game logic, it represents an instance of your game running on your server. It can be any JavaScript function or ES6 class and has to expose a contructor (it is instanciated with the `new` operator) and an `init` method.
 
-When a room host player launches the game, a new instance of your game class is created and its method `init` is called with a initialization object containing game context data.
+When the host player launches the game, a new instance of your game class is created and its method `init` is called with a initialization object containing context data.
 
 ```js
 class Game {
@@ -151,37 +154,39 @@ class Game {
 
 ### Game actions
 
-In addition to the `init` method, your game class must expose methods named after every `actions` declared in the server config. Action methods take a single object as parameter containing the requester `playerId` and `data` as such:
+In addition to the `init` method, your game class must expose methods named after every `actions` declared in the server config. Actions take a single object as parameter containing the requester `playerId` and `data` as such:
 ```js
 toggleLight({
     playerId // publicId of the player who sent the action event
     data // data sent with the action event
 })
 {
-    // Your game logic corresponding to the 'toggleLight' action
+    // Your game logic
 }
 ```
 
-Action methods are used to update your game state. They are the interface between client players and the game running in the room.
+Actions are used to update your game state. They are the interface between client players and the game running in the room.
 
 #### Return response
 
-Game actions can send back a response to the caller. Simply return an object with a `response` key containing whatever data you want to return. Note that you have to return synchronously in the action method. If you need to perform asynchronous actions, use the [RoomPusher](#roompusher) to send *another* message to client(s) when your action is done.
+Actions can send back a response to the caller. Simply return an object with a `response` key containing whatever data you want to return. Returns must be synchronous. If you need to perform asynchronous actions, use the [RoomPusher](#roompusher) to send *another* message to client(s) when your action is done.
 
 ```js
-talk({ playerId, data}) {
-    this.sentences[playerId].push(data)
+talk({ playerId, data})
+{
+    // do stuff with data
+    
     return { response: `You just said ${data}` }
 }
 ```
 
-> *Note:* the response must be a simple type or a serializable datastructure, as it is sent through via websocket.
+> *Note:* the response must be a simple type or a serializable datastructure.
 
 #### Return error
 
-Game actions can also send back an error to the caller. Your game UI should prevent your players from accidentaly do an action they are not supposed to do, but still always check for access rights and data validity as UIs can be hijacked.
+Actions can also send back an error to the caller. Your game UI should prevent your players from accidentaly do an action they are not supposed to do, but still always check for access rights and data validity as UIs can be hijacked.
 
-To send back an error, just return an object with an `error` key containing your error. Note that you have to return synchronously in the action method.
+To send back an error, simply return an object with an `error` key containing your error. Returns must be synchronous too.
 
 ```js
 rollDice({ playerId }) {
@@ -194,15 +199,15 @@ rollDice({ playerId }) {
 }
 ```
 
-> *Note:* the error content must be a simple type or a serializable datastructure, as it is sent through via websocket.
-
-> *Note:* `room.io` sends low-level errors that are always in the form: `{ code: 'err_xxx' }`. You can stick to the same formalism for your custom errors, but that is not mandatory. See the documentation of [`room.io-client`](https://github.com/oni0nknight/room.io-client#errors) for a full list of `room.io` errors.
+> *Notes:*
+> - The error content must be a simple type or a serializable datastructure.
+> - `room.io` sends low-level errors that are always in the form: `{ code: 'err_xxx' }`. You can stick to the same formalism for your custom errors, but that is not mandatory. See [`room.io-client`](https://github.com/oni0nknight/room.io-client#errors) for the full list of `room.io` errors.
 
 ### RoomPusher
 
 When a game instance is created, the server provides a RoomPusher instance to the Game in the `init` call. This object can be used to send messages from the server to the players.
 
-The `pushTo` method sends a event to a specific player (publicId), optionally with a payload.
+The `pushTo` method sends a event to a specific player (public id), optionally with a payload.
 ```js
 say({ playerId, data }) {
     const { targetId, message } = data
@@ -247,7 +252,7 @@ rollDice({ playerId }) {
 
 ## Logging
 
-Room.io uses [winston](https://github.com/winstonjs/winston) to log messages on the server.
+`room.io` uses [winston](https://github.com/winstonjs/winston) to log messages on the server.
 Use the `logger.level` setting from the configuration object to determine the logging level from the following supported values (default is `info`):
 
 | Name          | Level |  Description    |
@@ -259,7 +264,7 @@ Use the `logger.level` setting from the configuration object to determine the lo
 | `info`        | `4`   | Basic info logs. Displayed in white. |
 | `debug`       | `5`   | Debug logs that can be used during development. Displayed in white. |
 
-Logs of a higher level than the chosen `logger.level` are not shown.
+Logs of level greater than than the chosen `logger.level` are not shown.
 
 ## Testing
 
