@@ -251,7 +251,7 @@ rollDice({ playerId }) {
 ## Logging
 
 `room.io` uses [winston](https://github.com/winstonjs/winston) to log messages on the server.
-Use the `logger.level` setting from the configuration object to determine the logging level from the following supported values (default is `info`):
+Use the `logger.level` setting from the server configuration to determine the logging level from the following supported values (default is `info`):
 
 | Name          | Level |  Description    |
 | ------------- | ----- | --------------- |
@@ -262,7 +262,13 @@ Use the `logger.level` setting from the configuration object to determine the lo
 | `info`        | `4`   | Basic info logs. Displayed in white. |
 | `debug`       | `5`   | Debug logs that can be used during development. Displayed in white. |
 
-Logs of level greater than than the chosen `logger.level` are not shown.
+> Logs of level greater than than the chosen `logger.level` are not shown.
+
+### Log transport
+
+If NODE_ENV is set to 'development', logs are only displayed in the server console with a readable colored syntax. On non-development environments, logs are additionally stored in a `server/server.log` file in a json format.
+
+Use the `logger.defaultMeta` setting from the server configuration to add your custom metadata to these json file logs.
 
 ## Testing
 
