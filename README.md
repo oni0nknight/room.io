@@ -90,7 +90,7 @@ const server = createServer({
     ],
     playerDataValidator: (data) => !!data && (data?.avatar instanceof Number),
     roomSettingsValidator: (settings) => !!settings && (typeof settings?.lightCount === 'string'),
-    roomSettingsChecker: (settings, playerCount) => settings.lightCount <= playerCount,
+    roomSettingsChecker: (settings, players) => settings.lightCount <= players.length,
     logger: {
         level: 'info'
     }
@@ -120,7 +120,7 @@ A function run against the payload sent by players when trying to update their o
 A function run against the payload sent by the host player when trying to update the room settings. Must return a boolean value telling if the payload is in the valid form.
 
 `roomSettingsChecker` (Optional)  
-A function run when the game instance is starting. It receives 2 parameters: `roomSettings` (current room settings) and `playerCount` (current number of players) and must return a boolean value telling if the game can start with the current room settings. You can use it to ensure the room settings chosen by the host are valid for the current number of players.
+A function run when the game instance is starting. It receives 2 parameters: `roomSettings` (current room settings) and `players` (current players with their`publicId`, `name` and `data`) and must return a boolean value telling if the game can start with the current room settings. You can use it to ensure the room settings chosen by the host are valid for the current number of players for example.
 
 `logger` (Optional)
 A configuration object for the server logger. Supported keys are `level` for the log level and `defaultMeta` for the default metadata added to each log.
