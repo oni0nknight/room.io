@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Framework for creating client-server game architectures based on socket.io",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint ."
+  },
   "keywords": [
     "game",
     "websocket",
@@ -22,7 +24,6 @@
     "winston": "3.3.3"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.24.0"
+    "eslint": "8.46.0"
   }
 }
