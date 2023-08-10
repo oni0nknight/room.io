@@ -24,6 +24,8 @@ const Server = require('./lib/Server')
  * @property {any} gameClass A room.io Game class
  * @property {number} minPlayers The minimum number (included) of players to start the game
  * @property {number} maxPlayers The maximum number (included) of players to start the game
+ * @property {any} defaultPlayerData The default data attributed to players if not provided otherwise
+ * @property {any} defaultRoomSettings The default room settings set when creating the room
  * @property {Array.<ActionDescriptor>} [actions=[]] List of game actions
  * @property {ValidationCallback} [playerDataValidator] Function to validate the player data
  * @property {ValidationCallback} [roomSettingsValidator] Function to validate the room settings
